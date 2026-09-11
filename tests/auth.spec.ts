@@ -88,6 +88,10 @@ test.describe("AUTH - auth", () => {
 });
     test('AUTH-NEW-01: Login with valid credentials redirects to Dashboard', async ({ page }) => {
     await page.goto('https://numaa.ai/login');
+        const acceptCookies = page.getByRole('button', { name: /accept all/i });
+    if (await acceptCookies.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await acceptCookies.click();
+    }
     await page.fill('input[type="email"]', process.env.TEST_EMAIL!);
     await page.fill('input[type="password"]', process.env.TEST_PASSWORD!);
     const overlay = page.locator('.fixed.inset-0.z-\\[9998\\]');
