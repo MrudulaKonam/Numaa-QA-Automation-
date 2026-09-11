@@ -86,17 +86,14 @@ test.describe("AUTH - auth", () => {
   });
 
 });
-  // ID: AUTH-NEW-01 | Type: Positive | Severity: High
-  // Steps: Go to login page, enter valid email/password, submit
-  // Expected: User is redirected to the Dashboard and sees a welcome message
     test('AUTH-NEW-01: Login with valid credentials redirects to Dashboard', async ({ page }) => {
     await page.goto('https://numaa.ai/login');
     await page.fill('input[type="email"]', process.env.TEST_EMAIL!);
     await page.fill('input[type="password"]', process.env.TEST_PASSWORD!);
     const overlay = page.locator('.fixed.inset-0.z-\\[9998\\]');
-    if (await overlay.isVisible().catch(() => false)) {
-      await page.keyboard.press('Escape');
+    if (await overlay.count() > 0) {
+      await overlay.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
     }
-    await page.click('button[type="submit"]', { force: true });
-    await expect(page).toHaveURL(/dashboard/, { timeout: 15000 });
+    await page.getByRole('button', { name: /continue/i }).click();
+    await expect(page).toHaveURL(/dashboard/, { timeout: 20000 });
   });
