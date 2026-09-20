@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { gotoPublic } from './helpers';
 
 // Module: Services  |  1 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx
@@ -14,10 +15,11 @@ test.describe("Services - services", () => {
   // Steps: Inspect the CTA button directly below that text.
   // Steps: Note the button's actual label.
   // Expected: Button text should describe the action it performs, consistent with the supporting sentence above it.
-  test.skip("Services_02: CTA button label is unclear", async ({ page }) => {
-    // TODO: implement navigation + assertions for this case
-    // await page.goto('https://numaa.ai/...');
-    // await expect(page.locator('...')).toBeVisible();
+  test("Services_02: CTA button label is unclear", async ({ page }) => {
+    await gotoPublic(page, '/services');
+    const section = page.getByRole('heading', { name: 'Baby Setup Services' }).locator('..');
+    await expect(section.getByText('Explore baby preparation tools and product recommendations for your growing family.', { exact: true })).toBeVisible();
+    await expect(section.getByRole('button', { name: 'Baby Preparation', exact: true })).toBeVisible();
   });
 
 });
