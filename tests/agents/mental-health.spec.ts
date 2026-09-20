@@ -1,25 +1,8 @@
-import { test, expect, Page } from '@playwright/test';
-import { requireCredentials } from '../helpers';
+import { test, expect } from '@playwright/test';
+import { login } from '../helpers';
 
 // Module: MH  |  22 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx
-
-async function login(page: Page) {
-  requireCredentials();
-
-  const email = process.env.TEST_EMAIL;
-  const password = process.env.TEST_PASSWORD;
-
-  await page.goto('/login');
-  const acceptCookies = page.getByRole('button', { name: /accept all/i });
-  if (await acceptCookies.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await acceptCookies.click();
-  }
-  await page.fill('input[type="email"]', email!);
-  await page.fill('input[type="password"]', password!);
-  await page.getByRole('button', { name: /continue/i }).click();
-  await expect(page).toHaveURL(/dashboard/, { timeout: 20000 });
-}
 
 test.describe("MH - mental-health", () => {
 
