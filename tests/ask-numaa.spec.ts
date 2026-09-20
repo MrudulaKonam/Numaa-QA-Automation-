@@ -182,7 +182,6 @@ test.describe("ASK - ask-numaa", () => {
   test("ASK-09: Suggested-topic card is presented as interactive", async ({ page }) => {
     await login(page);
     await page.goto('/asknumaa');
-    await page.getByRole('button', { name: 'New', exact: true }).click();
     const card = page.getByRole('heading', { name: 'Common Pregnancy Concern', exact: true });
     await card.waitFor({ state: 'visible' });
     const cardContainer = card.locator('..').locator('..');
