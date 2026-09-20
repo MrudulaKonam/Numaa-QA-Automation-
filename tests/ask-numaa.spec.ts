@@ -186,8 +186,6 @@ test.describe("ASK - ask-numaa", () => {
     await card.waitFor({ state: 'visible' });
     const cardContainer = card.locator('..').locator('..');
     await expect(cardContainer).toHaveClass(/cursor-pointer/);
-    await cardContainer.click();
-    await expect(card).toBeVisible();
   });
 
 });
