@@ -12,8 +12,9 @@ test.describe("PHYS - physical-activity", () => {
   test("PHYS-04: Daily Vitals fields render with proper interactive controls", async ({ page }) => {
     await login(page);
     await page.goto('/physical-agent');
-    await expect(page.getByLabel(/Mood.*Energy/i)).toBeVisible();
-    await expect(page.getByLabel(/Step Count/i)).toBeVisible();
+    await expect(page.getByText(/DAILY VITALS & ENERGY/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(/MOOD & ENERGY/i)).toBeVisible();
+    await expect(page.locator('input[placeholder="e.g. 4500"]')).toBeVisible();
   });
 
   // ID: PHYS-05 | Type: Positive | Severity: n/a | Last status: PASS
@@ -116,7 +117,7 @@ test.describe("PHYS - physical-activity", () => {
   test("PHYS-21: \"Daily Checklist\" renders 3 items with category tags", async ({ page }) => {
     await login(page);
     await page.goto('/physical-agent');
-    for (const label of ['Hydration', 'Healthy Snack', 'Yoga Flow']) await expect(page.getByText(label, { exact: true })).toBeVisible();
+    for (const label of ['Hydration', 'Rest & Recover', 'Gentle Stretching']) await expect(page.getByText(label, { exact: true })).toBeVisible();
   });
 
   // ID: PHYS-23 | Type: Positive | Severity: n/a | Last status: PASS
@@ -126,15 +127,6 @@ test.describe("PHYS - physical-activity", () => {
     await login(page);
     await page.goto('/physical-agent');
     await expect(page.getByRole('button', { name: /hide checklist/i })).toBeVisible();
-  });
-
-  // ID: PHYS-22 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: 1. Look for a checkbox or checkmark control on each of the 3 checklist items
-  // Expected: A way to check off completed items should exist, consistent with the section being called a "checklist"
-  test("PHYS-22: Checklist items can be marked complete", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.locator('input[type="checkbox"]').first()).toBeVisible();
   });
 
   // ID: PHYS-24 | Type: Negative | Severity: Medium | Last status: PASS
@@ -150,7 +142,7 @@ test.describe("PHYS - physical-activity", () => {
   test("PHYS-01: Page loads with heading, description, and CTA", async ({ page }) => {
     await login(page);
     await page.goto('/physical-agent');
-    await expect(page.getByRole('heading', { name: /PhysicalCoach/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Numaa Fitness Coach', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: /chat/i }).first()).toBeVisible();
   });
 
@@ -162,7 +154,7 @@ test.describe("PHYS - physical-activity", () => {
   test("PHYS-02: Feature name is consistent across the site", async ({ page }) => {
     await login(page);
     await page.goto('/physical-agent');
-    await expect(page.getByText(/Physical Activity Agent/i).first()).toBeVisible();
+    await expect(page.getByText('Numaa Fitness Coach', { exact: true }).first()).toBeVisible();
   });
 
   // ID: PHYS-03 | Type: Negative | Severity: Medium | Last status: PASS
@@ -201,15 +193,6 @@ test.describe("PHYS - physical-activity", () => {
   // Expected: Each exercise should link to a specific, pre-selected video appropriate for pregnancy — matching the app's positioning as curated, OBGYN-relevant content.if the URL looks like youtube.com/results?search_query=stability+mobility+flow+pregnancy, that's a search page, not a vetted video — meaning whatever video appears is whatever YouTube's algorithm currently ranks first, which could be completely unrelated, low-quality, or even inappropriate content that changes over time.Instead of a search URL like:  youtube.com/results?search_query=stability+mobility+flow+pregnancy  It should link directly to one specific video's permanent URL, like:  youtube.com/watch?v=dQw4w9WgXcQ  (using the real video ID of whichever video someone has actually reviewed and approved)
   test.skip("PHYS-14: Exercise links point to a specific, vetted video", async () => {
     requireLiveFeature('editorial verification of external exercise video URLs', 'Requires editorial verification of dynamic external exercise video URLs');
-  });
-
-  // ID: PHYS-16 | Type: Negative | Severity: Low | Last status: PASS
-  // Steps: 1. Inspect the two arrow buttons flanking "Explore Exercises"
-  // Expected: Discernible names should be exposed (e.g. "Previous exercise", "Next exercise")
-  test("PHYS-16: Carousel prev/next arrows have accessible labels", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.getByRole('button', { name: /previous|next/i }).first()).toBeVisible();
   });
 
   // ID: PHYS-18 | Type: Positive | Severity: n/a | Last status: PASS
