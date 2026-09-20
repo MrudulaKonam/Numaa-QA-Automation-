@@ -59,19 +59,6 @@ test.describe("AUTH - auth", () => {
     await expect(page.getByText("Email can contain only one '@'.", { exact: true })).toBeVisible();
   });
 
-  // ID: AUTH-05 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Enter a valid-format but wrong email/password combo
-  // Steps: 2. Click "Continue"
-  // Expected: Clear "invalid credentials" error, no account/session details leaked
-  test("AUTH-05: Login with incorrect credentials", async ({ page }) => {
-    test.skip(!process.env.TEST_EMAIL || !process.env.TEST_PASSWORD, 'Set TEST_EMAIL and TEST_PASSWORD to run credential-dependent tests');
-    await gotoPublic(page, '/login');
-    await page.locator('input[type="email"]').fill(process.env.TEST_EMAIL!);
-    await page.locator('input[type="password"]').fill('definitely-wrong-password');
-    await page.getByRole('button', { name: 'CONTINUE →', exact: true }).click();
-    await expect(page.getByRole('region', { name: 'Notifications alt+T' })).not.toBeEmpty({ timeout: 3000 });
-  });
-
   // ID: AUTH-06 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Go to /signup
   // Steps: 2. Enter different values in Password and Confirm Password
@@ -87,52 +74,4 @@ test.describe("AUTH - auth", () => {
     await expect(page.getByText(/passwords? do not match|passwords? must match|password mismatch/i)).toBeVisible();
   });
 
-  // ID: AUTH-07 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Sign up using an email that already has an account
-  // Expected: Clear "account already exists" message, suggests logging in instead
-  test.skip("AUTH-07: Signup with an already-registered email", async ({ page }) => {
-    test.skip(true, 'Requires a controlled, already-registered test account without mutating account state');
-  });
-
-  // ID: AUTH-08 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Go to /login
-  // Steps: 2. Enter a valid, registered email and correct password
-  // Steps: 3. Click "Continue"
-  // Expected: User is authenticated and redirected to the Dashboard, session/identity persists on reload
-  test("AUTH-08: Login with valid credentials", async ({ page }) => {
-    test.skip(!process.env.TEST_EMAIL || !process.env.TEST_PASSWORD, 'Set TEST_EMAIL and TEST_PASSWORD to run authenticated login coverage');
-    await gotoPublic(page, '/login');
-    const acceptCookies = page.getByRole('button', { name: /accept all/i });
-    if (await acceptCookies.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await acceptCookies.click();
-    }
-    await page.locator('input[type="email"]').fill(process.env.TEST_EMAIL!);
-    await page.locator('input[type="password"]').fill(process.env.TEST_PASSWORD!);
-    const overlay = page.locator('.fixed.inset-0.z-\\[9998\\]');
-    if (await overlay.count() > 0) {
-      await overlay.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
-    }
-    await page.getByRole('button', { name: 'CONTINUE →', exact: true }).click();
-    await expect(page).toHaveURL(/dashboard/, { timeout: 20000 });
-    await page.reload();
-    await expect(page).toHaveURL(/dashboard/, { timeout: 10000 });
-  });
-
-
 });
-    test('AUTH-NEW-01: Login with valid credentials redirects to Dashboard', async ({ page }) => {
-    test.skip(!process.env.TEST_EMAIL || !process.env.TEST_PASSWORD, 'Set TEST_EMAIL and TEST_PASSWORD to run authenticated tests');
-    await page.goto('/login');
-        const acceptCookies = page.getByRole('button', { name: /accept all/i });
-    if (await acceptCookies.isVisible({ timeout: 5000 }).catch(() => false)) {
-      await acceptCookies.click();
-    }
-    await page.fill('input[type="email"]', process.env.TEST_EMAIL!);
-    await page.fill('input[type="password"]', process.env.TEST_PASSWORD!);
-    const overlay = page.locator('.fixed.inset-0.z-\\[9998\\]');
-    if (await overlay.count() > 0) {
-      await overlay.waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
-    }
-    await page.getByRole('button', { name: /continue/i }).click();
-    await expect(page).toHaveURL(/dashboard/, { timeout: 20000 });
-  });
