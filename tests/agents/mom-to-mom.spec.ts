@@ -76,7 +76,7 @@ test.describe("MTM - mom-to-mom", () => {
   test("MTM2-10: Composer supporting controls render", async ({ page }) => {
     await login(page);
     await page.goto('/mom-to-mom');
-    for (const label of ['Photo', 'Voice', 'Health Categories', 'Share']) await expect(page.getByRole('button', { name: new RegExp(label, 'i') })).toBeVisible();
+    for (const label of ['Photo', 'Voice', 'Explore Health Topics', 'Share']) await expect(page.getByRole('button', { name: new RegExp(label, 'i') })).toBeVisible();
   });
 
   // ID: MTM2-11 | Type: Negative | Severity: n/a | Last status: PASS
