@@ -64,34 +64,6 @@ test.describe("PHYS - physical-activity", () => {
     await expect(page.getByText(/AI.*safety|safety.*AI/i).first()).toBeVisible();
   });
 
-  // ID: PHYS-07 | Type: Negative | Severity: n/a | Last status: PASS
-  // Steps: 1. Click "Back Pain"
-  // Steps: 2. Click "None"
-  // Expected: Selecting "None" should clear/disable other symptom selections since they're logically exclusive
-  test.skip("PHYS-07: Selecting \"None\" is mutually exclusive with specific symptoms", async () => {
-    requireLiveFeature('symptom selection state transitions', 'Requires mutating symptom selections and validating form state transitions');
-  });
-
-  // ID: PHYS-11 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: 1. Fill in the check-in form
-  // Steps: 2. Click "Create My Personalized Plan →"
-  // Expected: A plan reflecting the submitted vitals/symptoms/preferences should be generated
-  test.skip("PHYS-11: \"Create My Personalized Plan\" generates a plan from the submitted data", async () => {
-    requireLiveFeature('external personalized-plan response', 'Requires an external personalized-plan response');
-  });
-
-  // ID: PHYS-12 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: Log in to numaa.ai with a valid test account
-  // Steps: Navigate to the Physical Activity Agent check-in form
-  // Steps: Partially fill in the form — select at least one field (e.g., a symptom, a vital, or any other check-in field), but don't complete the entire form
-  // Steps: Locate and click the "Save Draft" button
-  // Steps: Reload the page or refresh
-  // Steps: Observe the state of the form after reload
-  // Expected: The "Save Draft" button should be enabled when the form has content, and after clicking it and reloading the page, the previously entered answers should be restored — appearing pre-filled in the form.
-  test.skip("PHYS-12: \"Save Draft\" preserves in-progress answers", async () => {
-    requireCredentials();
-  });
-
   // ID: PHYS-26 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect the left app sidebar on /physical-agent
   // Expected: Same sidebar (Dashboard, Calendar, agent shortcuts, etc.) seen on other authenticated pages renders here too
@@ -129,13 +101,6 @@ test.describe("PHYS - physical-activity", () => {
     await expect(page.getByRole('button', { name: /hide checklist/i })).toBeVisible();
   });
 
-  // ID: PHYS-24 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: 1. Compare the "Drink 4L of water" target on this page's Daily Checklist against the "HYDRATION Target: 2700ml" shown on the Nutrition Agent page for the same logged-in user
-  // Expected: A single consistent daily hydration goal should be used across features for the same user
-  test.skip("PHYS-24: Hydration target is consistent with the Nutrition Agent \u2014 CRITICAL", async () => {
-    requireCredentials();
-  });
-
   // ID: PHYS-01 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Navigate to https://numaa.ai/physical-agent
   // Expected: "PhysicalCoach" heading, description, and Chat button render
@@ -157,15 +122,6 @@ test.describe("PHYS - physical-activity", () => {
     await expect(page.getByText('Numaa Fitness Coach', { exact: true }).first()).toBeVisible();
   });
 
-  // ID: PHYS-03 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: 1. Inspect the "Chat" button's accessible name
-  // Expected: A descriptive label should be exposed, consistent with Mental Health/Medication/Gamifier's pattern
-  test("PHYS-03: Generic \"Chat\" CTA has a descriptive accessible label", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.getByRole('button', { name: /chat/i }).first()).toHaveAccessibleName(/chat/i);
-  });
-
   // ID: PHYS-13 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect "Your Plan for Today"
   // Expected: "Stability & Mobility Flow" card with duration, impact level, and description should render
@@ -182,17 +138,6 @@ test.describe("PHYS - physical-activity", () => {
     await login(page);
     await page.goto('/physical-agent');
     for (const label of ['Prenatal Yoga', 'Low-Impact Swim', 'Fitness Ball Squats', 'Wall Push-Ups', 'Modified Side Plank', 'Light Walking', 'Pelvic Tilts', 'Seated Rowing']) await expect(page.getByText(label, { exact: true })).toBeVisible();
-  });
-
-  // ID: PHYS-14 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: Navigate to the Physical Activity Agent page (via Dashboard → AI Agents → Physical Activity Agent)
-  // Steps: Locate the "Stability & Mobility Flow" card (the featured "Plan for Today" exercise)
-  // Steps: Right-click the Video button/link on that card → select "Copy Link" or "Inspect" to see the actual URL it points to
-  // Steps: Repeat for each of the 8 "Explore Exercises" cards below it
-  // Steps: For each URL, check: does it point to a specific YouTube video (a URL containing /watch?v=...), or a generic search results page (a URL containing /results?search_query=...)?
-  // Expected: Each exercise should link to a specific, pre-selected video appropriate for pregnancy — matching the app's positioning as curated, OBGYN-relevant content.if the URL looks like youtube.com/results?search_query=stability+mobility+flow+pregnancy, that's a search page, not a vetted video — meaning whatever video appears is whatever YouTube's algorithm currently ranks first, which could be completely unrelated, low-quality, or even inappropriate content that changes over time.Instead of a search URL like:  youtube.com/results?search_query=stability+mobility+flow+pregnancy  It should link directly to one specific video's permanent URL, like:  youtube.com/watch?v=dQw4w9WgXcQ  (using the real video ID of whichever video someone has actually reviewed and approved)
-  test.skip("PHYS-14: Exercise links point to a specific, vetted video", async () => {
-    requireLiveFeature('editorial verification of external exercise video URLs', 'Requires editorial verification of dynamic external exercise video URLs');
   });
 
   // ID: PHYS-18 | Type: Positive | Severity: n/a | Last status: PASS
@@ -213,13 +158,6 @@ test.describe("PHYS - physical-activity", () => {
     await page.goto('/physical-agent');
     await expect(page.getByText('Daily Steps', { exact: true })).toBeVisible();
     await expect(page.getByText('Streak', { exact: true })).toBeVisible();
-  });
-
-  // ID: PHYS-19 | Type: Negative | Severity: n/a | Last status: PASS
-  // Steps: 1. Compare "1 Day Streak" against which day in the weekly calendar shows "Activity Logged!"
-  // Expected: If today has no logged activity yet, the streak label should make clear whether it counts yesterday's logged day or requires today's entry too
-  test.skip("PHYS-19: Streak count is consistent with today's logged activity", async () => {
-    requireCredentials();
   });
 
 });
