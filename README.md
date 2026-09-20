@@ -6,20 +6,20 @@ Each module below has its own Playwright spec file under `tests/`. Each test cas
 
 ## Modules
 
-- **NUT** (`tests/nutrition-agent.spec.ts`) — 27 cases
-- **CNT** (`tests/content.spec.ts`) — 25 cases
-- **MTM** (`tests/mom-to-mom.spec.ts`) — 25 cases
-- **PHYS** (`tests/physical-activity.spec.ts`) — 25 cases
-- **KICK** (`tests/kick-counter.spec.ts`) — 22 cases
-- **MH** (`tests/mental-health.spec.ts`) — 22 cases
-- **MED** (`tests/medication-agent.spec.ts`) — 21 cases
-- **ASK** (`tests/ask-numaa.spec.ts`) — 19 cases
+- **NUT** (`tests/agents/nutrition-agent.spec.ts`) — 27 cases
+- **CNT** (`tests/agents/content.spec.ts`) — 25 cases
+- **MTM** (`tests/agents/mom-to-mom.spec.ts`) — 25 cases
+- **PHYS** (`tests/agents/physical-activity.spec.ts`) — 25 cases
+- **KICK** (`tests/agents/kick-counter.spec.ts`) — 22 cases
+- **MH** (`tests/agents/mental-health.spec.ts`) — 22 cases
+- **MED** (`tests/agents/medication-agent.spec.ts`) — 21 cases
+- **ASK** (`tests/agents/ask-numaa.spec.ts`) — 19 cases
 - **ABOUT** (`tests/about-page.spec.ts`) — 17 cases
 - **LIB** (`tests/library.spec.ts`) — 15 cases
-- **TRV** (`tests/travel.spec.ts`) — 14 cases
-- **JRN** (`tests/journal.spec.ts`) — 13 cases
-- **CHK** (`tests/checklist.spec.ts`) — 12 cases
-- **GAME** (`tests/gamifier.spec.ts`) — 11 cases
+- **TRV** (`tests/agents/travel.spec.ts`) — 14 cases
+- **JRN** (`tests/agents/journal.spec.ts`) — 13 cases
+- **CHK** (`tests/agents/checklist.spec.ts`) — 12 cases
+- **GAME** (`tests/agents/gamifier.spec.ts`) — 11 cases
 - **Misc** (`tests/misc.spec.ts`) — 10 cases
 - **AUTH** (`tests/auth.spec.ts`) — 8 cases
 - **RES** (`tests/resources.spec.ts`) — 8 cases
