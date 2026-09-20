@@ -7,6 +7,7 @@ export default defineConfig({
   reporter: [['html', { open: 'never' }]],
   use: {
     baseURL: 'https://numaa.ai',
+    permissions: ['camera', 'microphone'],
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },

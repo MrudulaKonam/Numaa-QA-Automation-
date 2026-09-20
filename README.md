@@ -2,7 +2,7 @@
 
 Generated from `Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx` (370 cases).
 
-Each module below has its own Playwright spec file under `tests/`. Each test case is scaffolded as `test.skip(...)` with the original scenario, steps, expected result, severity, and last known status included as comments — fill in real selectors/assertions and remove `.skip` as you automate each one.
+Each module below has its own Playwright spec file under `tests/`. Agent specs are grouped under `tests/agents/`. Tests that require account state use the `TEST_EMAIL` and `TEST_PASSWORD` environment variables; camera and microphone flows receive browser permissions from Playwright configuration.
 
 ## Modules
 
@@ -21,24 +21,20 @@ Each module below has its own Playwright spec file under `tests/`. Each test cas
 - **CHK** (`tests/agents/checklist.spec.ts`) — 12 cases
 - **GAME** (`tests/agents/gamifier.spec.ts`) — 11 cases
 - **Misc** (`tests/misc.spec.ts`) — 10 cases
-- **AUTH** (`tests/auth.spec.ts`) — 8 cases
+- **AUTH** (`tests/auth.spec.ts`) — 5 cases
 - **RES** (`tests/resources.spec.ts`) — 8 cases
 - **NAV** (`tests/navigation.spec.ts`) — 6 cases
 - **FTR** (`tests/footer.spec.ts`) — 5 cases
 - **Baby** (`tests/baby.spec.ts`) — 4 cases
-- **PRC** (`tests/pricing.spec.ts`) — 4 cases
-- **QUIZ** (`tests/quiz.spec.ts`) — 4 cases
+- **QUIZ** (`tests/quiz.spec.ts`) — 1 case
 - **SVC** (`tests/services.spec.ts`) — 3 cases
 - **SVCPG** (`tests/services-page.spec.ts`) — 3 cases
 - **BLG** (`tests/blog.spec.ts`) — 2 cases
 - **TLS** (`tests/tools.spec.ts`) — 2 cases
 - **SEO** (`tests/seo.spec.ts`) — 2 cases
 - **BABY** (`tests/baby.spec.ts`) — 2 cases
-- **CTAPG** (`tests/cta-page.spec.ts`) — 2 cases
-- **SOON** (`tests/coming-soon.spec.ts`) — 2 cases
 - **NUTPG** (`tests/nutrition-page.spec.ts`) — 2 cases
 - **PAT** (`tests/patterns.spec.ts`) — 2 cases
-- **TRACK** (`tests/tracking.spec.ts`) — 2 cases
 - **CTA** (`tests/cta.spec.ts`) — 1 cases
 - **ERR** (`tests/errors.spec.ts`) — 1 cases
 - **HERO** (`tests/hero.spec.ts`) — 1 cases
@@ -49,4 +45,4 @@ Each module below has its own Playwright spec file under `tests/`. Each test cas
 - **TST** (`tests/test.spec.ts`) — 1 cases
 - **FEA** (`tests/features.spec.ts`) — 1 cases
 
-Total test cases scaffolded: 350
+For CI, add `TEST_EMAIL` and `TEST_PASSWORD` as GitHub Actions repository secrets. Backend- or AI-generated workflows still require deterministic API fixtures before they can be enabled safely.
