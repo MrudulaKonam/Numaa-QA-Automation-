@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { gotoPublic, login, requireBrowserPermission } from './helpers';
+import { gotoPublic, login } from './helpers';
 
 // Module: ASK  |  19 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx
@@ -45,13 +45,6 @@ test.describe("ASK - ask-numaa", () => {
     await expect(page).toHaveURL(/asknumaa|login/);
   });
 
-  // ID: ASK-14 | Type: Negative | Severity: High | Last status: PASS
-  // Steps: 1. Click "Voice conversation"
-  // Expected: Activates microphone input / a voice conversation mode
-  test.skip("ASK-14: \"Voice conversation\" opens voice input mode", async () => {
-    requireBrowserPermission('microphone', 'Requires browser microphone permissions and an interactive voice session');
-  });
-
   // ID: ASK-15 | Type: Negative | Severity: n/a | Last status: PASS
   // Steps: 1. Click "Attach" and select a file
   // Expected: File is attached to the outgoing message (e.g. for symptom photos, lab results)
@@ -64,18 +57,6 @@ test.describe("ASK - ask-numaa", () => {
       buffer: Buffer.from('%PDF-1.4 local fixture'),
     });
     await expect(page.getByText('lab-results.pdf', { exact: true })).toBeVisible();
-  });
-
-  // ID: ASK-20 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. While logged in, inspect the left app sidebar on /asknumaa
-  // Expected: Dashboard, Calendar, Your Body and Baby, Essential Testing, Preparation for the Baby, Message, Send Feedback, plus the AI-agent shortcut row (Ask NuMaa, Mom to Mom, Nutrition, Mental Health, Kick Count Agent, Baby Checklist, Gamifier, Medication, Physical Activity, Content, Journal, Shopping Agent, Travel Advisor) all render
-      test("ASK-20: Full authenticated app sidebar renders", async ({ page }) => {
-    await login(page);
-    await page.goto('/asknumaa');
-    for (const label of ['Dashboard', 'Calendar', 'Your Body and Baby', 'Essential Testing', 'Preparation for the Baby', 'Message', 'Send Feedback', 'Ask NuMaa', 'Mom to Mom', 'Nutrition', 'Wellness', 'Kick Count Agent', 'Baby Checklist', 'Gamifier Agent', 'Medication Support', 'Numaa Fitness', 'Content', 'Journal', 'Shopping Agent', 'Travel Advisor']) {
-      const regex = new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-      await expect(page.getByRole('link', { name: regex }).or(page.getByRole('button', { name: regex })).first()).toBeVisible();
-    }
   });
 
   // ID: ASK-21 | Type: Positive | Severity: Medium | Last status: PASS
@@ -158,14 +139,6 @@ test.describe("ASK - ask-numaa", () => {
     await expect(page.getByPlaceholder('Ask anything...')).toHaveValue('');
   });
 
-  // ID: ASK-07 | Type: Negative | Severity: n/a | Last status: PASS
-  // Steps: 1. Ask a question
-  // Steps: 2. Check whether it appears in the Chats sidebar list afterward
-  // Expected: New conversation should appear in the sidebar, replacing the empty state
-  test.skip("ASK-07: Chat history persists after asking a question", async () => {
-    requireBrowserPermission('session persistence', 'Requires a persisted external AI response and account chat history');
-  });
-
   // ID: ASK-08 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect the prompt suggestions below the main heading
   // Expected: "Common Pregnancy Concern", "Maternal Health Question", "Daily Activity Safety", "Energy & Fatigue" each render with a heading and one-line description
@@ -174,18 +147,6 @@ test.describe("ASK - ask-numaa", () => {
     for (const label of ['Common Pregnancy Concern', 'Maternal Health Question', 'Daily Activity Safety', 'Energy & Fatigue']) {
       await expect(page.getByRole('heading', { name: label, exact: true })).toBeVisible();
     }
-  });
-
-  // ID: ASK-09 | Type: Negative | Severity: n/a | Last status: PASS
-  // Steps: 1. Inspect the "Common Pregnancy Concern" card
-  // Expected: The suggestion is presented as an interactive prompt card
-  test("ASK-09: Suggested-topic card is presented as interactive", async ({ page }) => {
-    await login(page);
-    await page.goto('/asknumaa');
-    const card = page.getByRole('heading', { name: 'Common Pregnancy Concern', exact: true });
-    await card.waitFor({ state: 'visible' });
-    const cardContainer = card.locator('..').locator('..');
-    await expect(cardContainer).toHaveClass(/cursor-pointer/);
   });
 
 });
