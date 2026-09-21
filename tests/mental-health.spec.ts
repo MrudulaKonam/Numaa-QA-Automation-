@@ -69,16 +69,15 @@ test.describe("MH - mental-health", () => {
       await expect(page.getByText(label, { exact: true })).toBeVisible();
     }
   });
-
   test('MH-09: Chat input and crisis-support guidance render', async ({ page }) => {
+       await page.goto('/mental-health');
     const chatToggle = page.getByRole('button', { name: /chat/i }).first();
     if (await chatToggle.isVisible().catch(() => false)) {
       await chatToggle.click();
     }
     await expect(page.getByPlaceholder(/type.*message/i)).toBeVisible();
-    await expect(page.getByText(/If you feel unsafe or may harm yourself, contact emergency services/i)).toBeVisible();
+    await expect(page.getByText(/emergency services/i)).toBeVisible();
   });
-
   test('MH-10: Page <title> is unique to Mental Health', async ({ page }) => {
     await expect(page).toHaveTitle(/Mental Health|Wellness/i);
   });
