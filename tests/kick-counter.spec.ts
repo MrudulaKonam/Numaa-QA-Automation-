@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login, requireCredentials, requireLiveFeature } from '../helpers';
+import { login, requireCredentials, requireLiveFeature } from './helpers';
 
 // Module: KICK  |  22 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

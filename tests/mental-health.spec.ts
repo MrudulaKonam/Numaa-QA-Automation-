@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login } from '../helpers';
+import { login } from './helpers';
 
 // Module: MH  |  22 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { gotoPublic, login, requireCredentials, requireBrowserPermission } from '../helpers';
+import { gotoPublic, login, requireCredentials, requireBrowserPermission } from './helpers';
 
 // Module: TRV  |  14 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

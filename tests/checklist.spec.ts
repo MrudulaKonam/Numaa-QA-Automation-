@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login, requireLiveFeature } from '../helpers';
+import { login, requireLiveFeature } from './helpers';
 
 // Module: CHK  |  12 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login, requireCredentials, requireLiveFeature, requireBrowserPermission } from '../helpers';
+import { login, requireCredentials, requireLiveFeature, requireBrowserPermission } from './helpers';
 
 // Module: JRN  |  13 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

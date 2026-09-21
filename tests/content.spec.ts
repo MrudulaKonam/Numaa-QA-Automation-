@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { gotoPublic, login, requireCredentials, requireLiveFeature } from '../helpers';
+import { gotoPublic, login, requireCredentials, requireLiveFeature } from './helpers';
 
 // Module: CNT  |  25 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

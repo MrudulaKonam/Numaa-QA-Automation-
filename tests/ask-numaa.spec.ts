@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { gotoPublic, login } from '../helpers';
+import { gotoPublic, login } from './helpers';
 
 // Module: ASK  |  19 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx
