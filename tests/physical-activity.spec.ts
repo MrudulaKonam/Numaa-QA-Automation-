@@ -6,6 +6,26 @@ import { login, requireCredentials, requireLiveFeature } from './helpers';
 
 test.describe("PHYS - physical-activity", () => {
 
+  // ID: PHYS-01 | Type: Positive | Severity: n/a | Last status: PASS
+  // Steps: 1. Navigate to https://numaa.ai/physical-agent
+  // Expected: "PhysicalCoach" heading, description, and Chat button render
+  test("PHYS-01: Page loads with heading, description, and CTA", async ({ page }) => {
+    await login(page);
+    await page.goto('/physical-agent');
+    await expect(page.getByRole('heading', { name: 'Numaa Fitness Coach', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /chat/i }).first()).toBeVisible();
+  });
+
+  // ID: PHYS-02 | Type: Negative | Severity: Low | Last status: PASS
+  // Steps: Compare naming across:
+  // Steps: This page's micro-label ("Fitness Agent") 
+  // Expected: Take out fitness agent heading and replace with Physical activity Agent 
+  test("PHYS-02: Feature name is consistent across the site", async ({ page }) => {
+    await login(page);
+    await page.goto('/physical-agent');
+    await expect(page.getByText('Numaa Fitness Coach', { exact: true }).first()).toBeVisible();
+  });
+
   // ID: PHYS-04 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect "Mood & Energy" and "Step Count"
   // Expected: Real, operable controls should be exposed
@@ -64,64 +84,6 @@ test.describe("PHYS - physical-activity", () => {
     await expect(page.getByText(/AI.*safety|safety.*AI/i).first()).toBeVisible();
   });
 
-  // ID: PHYS-26 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Inspect the left app sidebar on /physical-agent
-  // Expected: Same sidebar (Dashboard, Calendar, agent shortcuts, etc.) seen on other authenticated pages renders here too
-  test("PHYS-26: Full authenticated app sidebar renders consistently", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.getByRole('button', { name: /dashboard/i }).first()).toBeVisible();
-    await expect(page.getByRole('button', { name: /calendar/i }).first()).toBeVisible();
-  });
-
-  // ID: PHYS-25 | Type: Negative | Severity: Medium | Last status: PASS
-  // Steps: 1. Check the browser tab title while on /physical-agent
-  // Expected: Should read something distinct, e.g. "Physical Activity | Numaa"
-  test("PHYS-25: Page <title> is unique to Physical Activity", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page).toHaveTitle(/Physical.*Numaa/i);
-  });
-
-  // ID: PHYS-21 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Inspect "Daily Checklist"
-  // Expected: Hydration, Healthy Snack, and Yoga Flow each render with a description and category tag
-  test("PHYS-21: \"Daily Checklist\" renders 3 items with category tags", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    for (const label of ['Hydration', 'Rest & Recover', 'Gentle Stretching']) await expect(page.getByText(label, { exact: true })).toBeVisible();
-  });
-
-  // ID: PHYS-23 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Inspect the control next to "Daily Checklist"
-  // Expected: "Hide checklist" should render with a clear accessible name
-  test("PHYS-23: \"Hide checklist\" toggle renders with a proper label", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.getByRole('button', { name: /hide checklist/i })).toBeVisible();
-  });
-
-  // ID: PHYS-01 | Type: Positive | Severity: n/a | Last status: PASS
-  // Steps: 1. Navigate to https://numaa.ai/physical-agent
-  // Expected: "PhysicalCoach" heading, description, and Chat button render
-  test("PHYS-01: Page loads with heading, description, and CTA", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.getByRole('heading', { name: 'Numaa Fitness Coach', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: /chat/i }).first()).toBeVisible();
-  });
-
-  // ID: PHYS-02 | Type: Negative | Severity: Low | Last status: PASS
-  // Steps: Compare naming across:
-  // Steps: 
-  // Steps: This page's micro-label ("Fitness Agent") 
-  // Expected: Take out fitness agent heading and replace with Physical activity Agent 
-  test("PHYS-02: Feature name is consistent across the site", async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    await expect(page.getByText('Numaa Fitness Coach', { exact: true }).first()).toBeVisible();
-  });
-
   // ID: PHYS-13 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect "Your Plan for Today"
   // Expected: "Stability & Mobility Flow" card with duration, impact level, and description should render
@@ -158,6 +120,52 @@ test.describe("PHYS - physical-activity", () => {
     await page.goto('/physical-agent');
     await expect(page.getByText('Daily Steps', { exact: true })).toBeVisible();
     await expect(page.getByText('Streak', { exact: true })).toBeVisible();
+  });
+
+  // ID: PHYS-21 | Type: Positive | Severity: n/a | Last status: PASS
+  // Steps: 1. Inspect "Daily Checklist"
+  // Expected: Hydration, Healthy Snack, and Yoga Flow each render with a description and category tag
+  test("PHYS-21: \"Daily Checklist\" renders 3 items with category tags and descriptions", async ({ page }) => {
+    await login(page);
+    await page.goto('/physical-agent');
+
+        const checklistItems = [
+      { title: 'Hydration', descriptionPattern: /water|hydration/i },
+      { title: 'Supplements', descriptionPattern: /prenatal|vitamin/i },
+      { title: 'Light Cardio', descriptionPattern: /walk|cardio/i }
+    ];
+
+    for (const item of checklistItems) {
+      await expect(page.getByText(item.title, { exact: true })).toBeVisible();
+      await expect(page.getByText(item.descriptionPattern).first()).toBeVisible();
+    }
+  });
+  // ID: PHYS-23 | Type: Positive | Severity: n/a | Last status: PASS
+  // Steps: 1. Inspect the control next to "Daily Checklist"
+  // Expected: "Hide checklist" should render with a clear accessible name
+  test("PHYS-23: \"Hide checklist\" toggle renders with a proper label", async ({ page }) => {
+    await login(page);
+    await page.goto('/physical-agent');
+    await expect(page.getByRole('button', { name: /hide checklist/i })).toBeVisible();
+  });
+
+  // ID: PHYS-25 | Type: Negative | Severity: Medium | Last status: PASS
+  // Steps: 1. Check the browser tab title while on /physical-agent
+  // Expected: Should read something distinct, e.g. "Physical Activity | Numaa"
+  test("PHYS-25: Page <title> is unique to Physical Activity", async ({ page }) => {
+    await login(page);
+    await page.goto('/physical-agent');
+    await expect(page).toHaveTitle(/Physical.*Numaa/i);
+  });
+
+  // ID: PHYS-26 | Type: Positive | Severity: n/a | Last status: PASS
+  // Steps: 1. Inspect the left app sidebar on /physical-agent
+  // Expected: Same sidebar (Dashboard, Calendar, agent shortcuts, etc.) seen on other authenticated pages renders here too
+  test("PHYS-26: Full authenticated app sidebar renders consistently", async ({ page }) => {
+    await login(page);
+    await page.goto('/physical-agent');
+    await expect(page.getByRole('button', { name: /dashboard/i }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /calendar/i }).first()).toBeVisible();
   });
 
 });
