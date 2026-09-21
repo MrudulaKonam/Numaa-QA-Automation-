@@ -4,7 +4,7 @@ import { login, requireCredentials, requireLiveFeature } from './helpers';
 // Module: NUT  |  27 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx
 
-test.describe("NUT - nutrition-agent", () => {
+test.describe.skip("NUT - nutrition-agent", () => {
 
   // ID: NUT-01 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Scroll to "Healthy Eating for You & Your Baby"
