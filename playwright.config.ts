@@ -11,5 +11,6 @@ export default defineConfig({
     permissions: ['camera', 'microphone'],
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 });
