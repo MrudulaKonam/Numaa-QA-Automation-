@@ -3,6 +3,8 @@ import { login } from './helpers';
 
 // Module: MED - medication-agent
 // Rebuilt from live numaa.ai/medication-agent content on 2026-09-20
+// Fixed: labels styled in CSS uppercase are matched case-insensitively,
+// since the underlying text node may be normal/mixed case.
 
 test.describe("MED - medication-agent", () => {
 
@@ -12,7 +14,7 @@ test.describe("MED - medication-agent", () => {
   });
 
   test('MED-01: Page loads with heading and description', async ({ page }) => {
-    await expect(page.getByText('MEDICATION SUPPORT', { exact: true })).toBeVisible();
+    await expect(page.getByText(/medication support/i)).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Medication Management', exact: true })).toBeVisible();
     await expect(page.getByText(/Update your medication schedule and log any changes/i)).toBeVisible();
   });
@@ -23,7 +25,7 @@ test.describe("MED - medication-agent", () => {
   });
 
   test('MED-03: Quick Scan Entry section renders with Take Photo and Upload File', async ({ page }) => {
-    await expect(page.getByText('QUICK SCAN ENTRY', { exact: true })).toBeVisible();
+    await expect(page.getByText(/quick scan entry/i)).toBeVisible();
     await expect(page.getByText(/Take a clear prescription photo/i)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Take Photo', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Upload File', exact: true })).toBeVisible();
@@ -31,17 +33,17 @@ test.describe("MED - medication-agent", () => {
 
   test('MED-04: Add New Medication form renders with all fields', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Add New Medication', exact: true })).toBeVisible();
-    await expect(page.getByText('MEDICATION NAME', { exact: false })).toBeVisible();
+    await expect(page.getByText(/medication name/i)).toBeVisible();
     await expect(page.getByPlaceholder('e.g., Prenatal Plus')).toBeVisible();
-    await expect(page.getByText('DOSAGE', { exact: false })).toBeVisible();
+    await expect(page.getByText(/dosage/i).first()).toBeVisible();
     await expect(page.getByPlaceholder('e.g., 500mg')).toBeVisible();
-    await expect(page.getByText('TYPE', { exact: true })).toBeVisible();
-    await expect(page.getByText('FREQUENCY', { exact: true })).toBeVisible();
-    await expect(page.getByText('TIMING', { exact: true })).toBeVisible();
-    await expect(page.getByText('Start Date', { exact: false })).toBeVisible();
-    await expect(page.getByText('TIMES', { exact: false })).toBeVisible();
+    await expect(page.getByText(/^type$/i)).toBeVisible();
+    await expect(page.getByText(/frequency/i)).toBeVisible();
+    await expect(page.getByText(/timing/i).first()).toBeVisible();
+    await expect(page.getByText(/start date/i)).toBeVisible();
+    await expect(page.getByText(/^times$/i)).toBeVisible();
     await expect(page.getByPlaceholder(/e.g., 09:00,21:00/i)).toBeVisible();
-    await expect(page.getByText('SPECIAL INSTRUCTIONS', { exact: true })).toBeVisible();
+    await expect(page.getByText(/special instructions/i)).toBeVisible();
     await expect(page.getByPlaceholder(/Take with food, avoid dairy/i)).toBeVisible();
   });
 
