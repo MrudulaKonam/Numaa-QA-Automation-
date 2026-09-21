@@ -11,8 +11,8 @@ test.describe("KICK - kick-counter", () => {
     await page.goto('/baby-kick-tracker');
   });
 
-  test('KICK-01: Page loads with heading and description', async ({ page }) => {
-    await expect(page.getByText('KICK COUNT AGENT', { exact: true })).toBeVisible();
+    test('KICK-01: Page loads with heading and description', async ({ page }) => {
+    await expect(page.getByText('Kick Count Agent', { exact: true }).first()).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Baby Movement Tracker', exact: true })).toBeVisible();
     await expect(page.getByText(/Track kicks, review movement patterns/i)).toBeVisible();
   });
@@ -22,14 +22,14 @@ test.describe("KICK - kick-counter", () => {
     await expect(page.getByText(/\w+ \d{1,2}, \d{4}/)).toBeVisible();
   });
 
-  test('KICK-03: Total Kicks Today counter and View History link render', async ({ page }) => {
+    test('KICK-03: Total Kicks Today counter and View History link render', async ({ page }) => {
     await expect(page.getByText('Total Kicks Today', { exact: true })).toBeVisible();
-    await expect(page.getByText('View History', { exact: false })).toBeVisible();
+    await expect(page.getByRole('button', { name: /View History/i })).toBeVisible();
   });
 
-  test('KICK-04: Kick Count Summary renders with empty-state message', async ({ page }) => {
-    await expect(page.getByText('Your Kick Count Summary', { exact: true })).toBeVisible();
-    await expect(page.getByText(/No kicks recorded yet/i)).toBeVisible();
+    test('KICK-04: Kick Count Summary renders with empty-state message', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Your Kick Count Summary', exact: true })).toBeVisible();
+    await expect(page.getByText('No kicks recorded for today.', { exact: true })).toBeVisible();
   });
 
   test('KICK-05: Start Session button renders', async ({ page }) => {
