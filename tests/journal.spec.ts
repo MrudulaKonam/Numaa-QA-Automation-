@@ -20,8 +20,12 @@ test.describe("JRN - journal", () => {
     await expect(page.getByText(/Document your journey, one moment at a time/i)).toBeVisible();
   });
 
-  test('JRN-02: Chat with Journal Agent widget shortcut renders', async ({ page }) => {
-    await expect(page.getByText(/chat with journal agent/i)).toBeVisible();
+    test(" Journal Agent — Entry History / Date Selection: Date-selection control renders with helper text", async ({ page }) => {
+    await login(page);
+    await page.goto('/journal-agent');
+    await expect(page.getByText('Select a day', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'MM/DD/YYYY', exact: true })).toBeVisible();
+    await expect(page.getByText('Choose today or an earlier date to view journal entries.', { exact: true })).toBeVisible();
   });
 
   test('JRN-03: Quick Actions render with all 4 entry types', async ({ page }) => {
