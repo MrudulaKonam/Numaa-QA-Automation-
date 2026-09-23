@@ -112,7 +112,7 @@ test.describe("PHYS - physical-activity", () => {
     await expect(page.getByText(/streak/i).first()).toBeVisible();
   });
 
-  // ID: PHYS-20 | Type: Positive | Severity: n/a | Last status: PASS
+   // ID: PHYS-20 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect the stats row below the exercise carousel
   // Expected: "Daily Steps" (with goal) and "Streak" (days total) should render
   test("PHYS-20: \"Daily Steps\" and \"Streak\" summary stats render", async ({ page }) => {
@@ -125,14 +125,13 @@ test.describe("PHYS - physical-activity", () => {
   // ID: PHYS-21 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect "Daily Checklist"
   // Expected: Hydration, Healthy Snack, and Yoga Flow each render with a description and category tag
-  test("PHYS-21: \"Daily Checklist\" renders 3 items with category tags and descriptions", async ({ page }) => {
+  test('PHYS-21: "Daily Checklist" renders 3 items with category tags and descriptions', async ({ page }) => {
     await login(page);
     await page.goto('/physical-agent');
-
-        const checklistItems = [
-      { title: 'Hydration', descriptionPattern: /water|hydration/i },
-      { title: 'Supplements', descriptionPattern: /prenatal|vitamin/i },
-      { title: 'Light Cardio', descriptionPattern: /walk|cardio/i }
+    const checklistItems = [
+      { title: 'Hydration', descriptionPattern: 'Drink 2700 ml of water' },
+      { title: 'Healthy Snack', descriptionPattern: 'Eat a piece of fresh fruit' },
+      { title: 'Yoga Flow', descriptionPattern: '10-Min prenatal yoga' },
     ];
 
     for (const item of checklistItems) {
@@ -140,6 +139,7 @@ test.describe("PHYS - physical-activity", () => {
       await expect(page.getByText(item.descriptionPattern).first()).toBeVisible();
     }
   });
+
   // ID: PHYS-23 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect the control next to "Daily Checklist"
   // Expected: "Hide checklist" should render with a clear accessible name
@@ -166,6 +166,4 @@ test.describe("PHYS - physical-activity", () => {
     await page.goto('/physical-agent');
     await expect(page.getByRole('button', { name: /dashboard/i }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /calendar/i }).first()).toBeVisible();
-  });
-
-});
+  });});
