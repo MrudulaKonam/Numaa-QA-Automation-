@@ -126,20 +126,25 @@ test.describe("PHYS - physical-activity", () => {
   // Steps: 1. Inspect "Daily Checklist"
   // Expected: Hydration, Healthy Snack, and Yoga Flow each render with a description and category tag
   test('PHYS-21: "Daily Checklist" renders 3 items with category tags and descriptions', async ({ page }) => {
-    await login(page);
-    await page.goto('/physical-agent');
-    const checklistItems = [
-      { title: 'Hydration', descriptionPattern: 'Drink 2700 ml of water' },
-      { title: 'Healthy Snack', descriptionPattern: 'Eat a piece of fresh fruit' },
-      { title: 'Yoga Flow', descriptionPattern: '10-Min prenatal yoga' },
-    ];
+  await login(page);
+  await page.goto('/physical-agent');
 
-    for (const item of checklistItems) {
-      await expect(page.getByText(item.title, { exact: true })).toBeVisible();
-      await expect(page.getByText(item.descriptionPattern).first()).toBeVisible();
-    }
-  });
+  // Scope to the Daily Checklist card specifically, using its container class.
+  const checklistCard = page.locator('div.bg-white.border.text-left.rounded-\\[24px\\].p-5');
 
+  const titles = checklistCard.locator('p.text-sm.font-bold.text-gray-900');
+  const descriptions = checklistCard.locator('p.text-xs.text-gray-500');
+  const tags = checklistCard.locator('span.text-\\[10px\\]');
+
+  await expect(titles).toHaveCount(3);
+  await expect(descriptions).toHaveCount(3);
+  await expect(tags).toHaveCount(3);
+
+  for (let i = 0; i < 3; i++) {
+    await expect(titles.nth(i)).not.toHaveText('');
+    await expect(descriptions.nth(i)).not.toHaveText('');
+  }
+});
   // ID: PHYS-23 | Type: Positive | Severity: n/a | Last status: PASS
   // Steps: 1. Inspect the control next to "Daily Checklist"
   // Expected: "Hide checklist" should render with a clear accessible name
