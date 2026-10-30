@@ -53,7 +53,6 @@ test.describe("ASKQ - ask-numaa-100-questions", () => {
       expect(response.status(), `Broken link: ${href}`).toBeLessThan(400);
     }
   }
-  }
 
   test('Q001: I am 28 weeks pregnant and leaking clear', async ({ page, request }) => {
     await askAndVerifyResponse(page, 'I am 28 weeks pregnant and leaking clear fluid');
