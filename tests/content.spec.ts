@@ -36,23 +36,29 @@ test.describe("CNT - content", () => {
   // consistency is confirmed directly on the live app.
 
 
+  // Watch & Learn, Pinned for You and Daily Reads are AI-generated and render
+  // 10-15s after page load, past the default 5s expect timeout.
+  const AI_SECTION_TIMEOUT = 20_000;
+
   test('CNT-05: "Watch & Learn" section renders with video cards', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Watch & Learn', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Watch & Learn', exact: true })).toBeVisible({ timeout: AI_SECTION_TIMEOUT });
     await expect(page.getByText(/Guided movement for your changing body/i)).toBeVisible();
     // Video cards link out to youtube.com; check at least one is present.
     await expect(page.getByText('youtube.com', { exact: true }).first()).toBeVisible();
   });
 
   test('CNT-06: "Pinned for You" section renders', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Pinned for You', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pinned for You', exact: true })).toBeVisible({ timeout: AI_SECTION_TIMEOUT });
     await expect(page.getByText('Pinterest', { exact: true }).first()).toBeVisible();
   });
 
   test('CNT-07: "Daily Reads" section renders with a Numaa AI Pick article', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Daily Reads', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Daily Reads', exact: true })).toBeVisible({ timeout: AI_SECTION_TIMEOUT });
     await expect(page.getByText(/Expert curation for the intentional parent/i)).toBeVisible();
-    await expect(page.getByText('NUMAA AI PICK', { exact: false })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Fetal Development Week by Week — What to Expect', exact: true }).first()).toBeVisible();
+    const aiPick = page.getByText('NUMAA AI PICK', { exact: false });
+    await expect(aiPick).toBeVisible();
+    // The AI Pick article title rotates, so check the pick has a titled article rather than a fixed title
+    await expect(aiPick.locator('xpath=following::*[self::h2 or self::h3 or self::h4][1]')).toHaveText(/\S/);
     await expect(page.getByText('Continue Reading', { exact: false }).first()).toBeVisible();
     await expect(page.getByText('FULL LIBRARY', { exact: false })).toBeVisible();
   });

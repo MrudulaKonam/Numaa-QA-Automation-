@@ -52,11 +52,13 @@ test.describe("DASH - dashboard", () => {
   });
 
   test('DASH-07: Nutrition card renders with meal plan and water intake', async ({ page }) => {
-    await expect(page.getByText('Nutrition', { exact: true })).toBeVisible();
+    // "Nutrition" text also appears on the AI Agents tile and sidebar; target the card heading
+    await expect(page.getByRole('heading', { name: 'Nutrition', exact: true })).toBeVisible();
     await expect(page.getByText('Day To Day Meals', { exact: false })).toBeVisible();
     await expect(page.getByText("Today's Meal Plan:", { exact: true })).toBeVisible();
     await expect(page.getByText('Calories Target:', { exact: true })).toBeVisible();
-    await expect(page.getByText("Water Intake:", { exact: true })).toBeVisible();
+    // Live label is "Water Intake :" (space before the colon)
+    await expect(page.getByText(/^Water Intake\s*:$/)).toBeVisible();
   });
 
   test('DASH-08: Fitness card renders steps and active minutes with quick-add buttons', async ({ page }) => {
@@ -86,9 +88,12 @@ test.describe("DASH - dashboard", () => {
   });
 
     test('DASH-11: AI Support panel lists all agent shortcuts', async ({ page }) => {
-    await expect(page.getByText('AI Support', { exact: true })).toBeVisible();
-    for (const label of ['Ask NuMaa', 'Nutrition Agent', 'Physical Activity Agent', 'Wellness', 'Kick Count Agent', 'Shopping Agent', 'Travel Advisor']) {
-      await expect(page.getByText(label, { exact: true }).first()).toBeVisible();
+    // Panel is now the "AI Agents" region; Nutrition Agent, Physical Activity Agent,
+    // Kick Count Agent and Shopping Agent were relabelled (live check 2026-10-30)
+    const panel = page.getByRole('region', { name: 'AI Agents' });
+    await expect(panel.getByRole('heading', { name: 'AI Agents', exact: true })).toBeVisible();
+    for (const label of ['Ask NuMaa', 'Nutrition', 'NuMaa Fitness', 'Wellness', 'Count Kicks', 'Shopping Partner', 'Travel Advisor']) {
+      await expect(panel.getByRole('button', { name: `Open ${label}`, exact: true })).toBeVisible();
     }
   });
 

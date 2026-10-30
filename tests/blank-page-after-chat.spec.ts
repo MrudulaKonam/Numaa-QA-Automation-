@@ -16,12 +16,11 @@ import { login } from './helpers';
 //
 // Scope: web only (no mobile viewport variant).
 //
-// IMPORTANT: only Ask NuMaa, Mom to Mom, and NuMaa Fitness (Physical
-// Activity) have confirmed paths/selectors from earlier testing. The
-// other five agents' paths below are best-guess, based on button labels —
-// verify each against the real app and correct any that are wrong before
-// trusting a pass/fail from this suite. A wrong path will 404, which
-// looks like a failure but isn't the blank-page bug we're hunting for.
+// Ask NuMaa and Mom to Mom were confirmed in earlier testing; the other six
+// agents' paths and chat selectors were verified against live numaa.ai on
+// 2026-10-30. If one starts failing on a 404 or a missing
+// launcher button, re-check the path before treating it as the blank-page
+// bug — a wrong path looks like a failure but isn't what we're hunting for.
 //
 // "Blank white page" detection: immediately after sending a question, we
 // poll the page body's visible text. If it ever drops to (near) empty
@@ -85,13 +84,15 @@ test.describe("BLANK - blank-page-after-chat", () => {
   }
 
   // --- Pattern B: popup chat (e.g. Mom to Mom) ---
-  async function askPopupChat(page, path, questionText, agentLabel) {
+  // Each agent's popup has its own launcher button and input placeholder, so
+  // both can be passed per agent; the defaults are Mom to Mom's.
+  async function askPopupChat(page, path, questionText, agentLabel,
+    { chatButton = /chat/i, placeholder = 'Ask me anything...' } = {}) {
     await page.goto(path);
-    const chatButton = page.getByRole('button', { name: /chat/i }).first();
-    await chatButton.click();
-    await expect(page.getByPlaceholder('Ask me anything...')).toBeVisible({ timeout: 15000 });
+    await page.getByRole('button', { name: chatButton, exact: typeof chatButton === 'string' }).first().click();
+    await expect(page.getByPlaceholder(placeholder, { exact: true })).toBeVisible({ timeout: 15000 });
 
-    const input = page.getByPlaceholder('Ask me anything...');
+    const input = page.getByPlaceholder(placeholder, { exact: true });
     await input.fill(questionText);
 
     const beforeLen = await visibleTextLength(page);
@@ -119,34 +120,39 @@ test.describe("BLANK - blank-page-after-chat", () => {
   });
 
   // ───────────────────────────────────────────────────────────
-  // Unconfirmed agents — verify path + chat pattern (A or B) before
-  // trusting these results. Each currently assumes Pattern A
-  // (full-page chat with "Ask anything..." placeholder); change to
-  // askPopupChat if the real agent uses a popup instead.
+  // Popup-chat agents — paths, launcher buttons and placeholders verified
+  // against live numaa.ai on 2026-10-30.
   // ───────────────────────────────────────────────────────────
 
   test('BLANK-03: Kick Count Chat does not go blank after sending a question', async ({ page }) => {
-    await askFullPageChat(page, '/kick-count-agent', 'How many kicks should I feel today?', 'Kick Count Chat');
+    await askPopupChat(page, '/baby-kick-tracker', 'How many kicks should I feel today?', 'Kick Count Chat',
+      { chatButton: 'Chat with Kick Count Agent', placeholder: 'Type a message...' });
   });
 
   test('BLANK-04: Baby Checklist does not go blank after sending a question', async ({ page }) => {
-    await askFullPageChat(page, '/baby-checklist', 'What should be on my hospital bag checklist?', 'Baby Checklist');
+    await askPopupChat(page, '/baby-checklist', 'What should be on my hospital bag checklist?', 'Baby Checklist',
+      { chatButton: 'Chat with Baby Checklist Agent', placeholder: 'Ask about baby gear, timing...' });
   });
 
   test('BLANK-05: NuMaa Fitness does not go blank after sending a question', async ({ page }) => {
-    await askFullPageChat(page, '/physical-agent', 'What exercises are safe in the third trimester?', 'NuMaa Fitness');
+    await askPopupChat(page, '/physical-agent', 'What exercises are safe in the third trimester?', 'NuMaa Fitness',
+      { chatButton: 'Chat', placeholder: 'Ask me anything...' });
   });
 
   test('BLANK-06: Content does not go blank after sending a question', async ({ page }) => {
-    await askFullPageChat(page, '/content-agent', 'Show me videos about labor and delivery.', 'Content');
+    await askPopupChat(page, '/content-agent', 'Show me videos about labor and delivery.', 'Content',
+      { chatButton: 'Chat with Content Agent', placeholder: 'Ask about pregnancy...' });
   });
 
   test('BLANK-07: Journal Companion does not go blank after sending a question', async ({ page }) => {
-    await askFullPageChat(page, '/journal', 'Help me write a journal entry about today.', 'Journal Companion');
+    await askPopupChat(page, '/journal-agent', 'Help me write a journal entry about today.', 'Journal Companion',
+      { chatButton: 'Chat with Journal Agent', placeholder: "Share what's on your mind..." });
   });
 
   test('BLANK-08: Shopping Assistant does not go blank after sending a question', async ({ page }) => {
-    await askFullPageChat(page, '/shopping-agent', 'What baby gear do I actually need?', 'Shopping Assistant');
+    // Placeholder uses a single ellipsis character, not three dots
+    await askPopupChat(page, '/shopping-agent', 'What baby gear do I actually need?', 'Shopping Assistant',
+      { chatButton: 'Chat', placeholder: 'Ask me anything…' });
   });
 
 });
