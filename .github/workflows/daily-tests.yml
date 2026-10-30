@@ -17,6 +17,7 @@ jobs:
         env:
           TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          NUMAA_USER_NAME: ${{ secrets.NUMAA_USER_NAME }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
