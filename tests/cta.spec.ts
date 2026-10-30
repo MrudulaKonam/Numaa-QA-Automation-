@@ -12,7 +12,8 @@ test.describe("CTA - cta", () => {
   test("CTA-01: Bottom CTA renders", async ({ page }) => {
     await gotoPublic(page, '/');
     await expect(page.locator('h2').filter({ hasText: 'Start Your Health' })).toBeVisible();
-    await expect(page.getByText(/Start free 14 days trial/i)).toBeVisible();
+    // Relabelled from "Start free 14 days trial" (live check 2026-10-30)
+    await expect(page.getByRole('button', { name: 'Start Free Trial', exact: true })).toBeVisible();
     await expect(page.getByText(/Learn More/i)).toBeVisible();
   });
 

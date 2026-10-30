@@ -33,7 +33,8 @@ test.describe("FTR - footer", () => {
   test("FTR-03: Footer \"Explore\" section renders", async ({ page }) => {
     await gotoPublic(page, '/');
     const footer = page.getByRole('contentinfo');
-    for (const label of ['Meal Plans', 'Mental Wellness', 'Kick Tracker', 'Pregnancy Calendar']) {
+    // "Mental Wellness" -> "Wellness" and "Kick Tracker" -> "Counts Kicks" on the live site (2026-10-30)
+    for (const label of ['Meal Plans', 'Wellness', 'Counts Kicks', 'Pregnancy Calendar']) {
       await expect(footer.getByRole('button', { name: label })).toBeVisible();
     }
   });
