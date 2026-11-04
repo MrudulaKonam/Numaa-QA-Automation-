@@ -1,6 +1,11 @@
 import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 
+// NuMaa Meet specs are run on demand only, never in the daily CI run.
+const ON_CI = !!process.env.CI;
+const MEET_SPECS = /numaa-meet(-mobile)?\.spec\.ts/;
+const MOBILE_MEET_SPEC = /numaa-meet-mobile\.spec\.ts/;
+
 export default defineConfig({
   testDir: './tests',
   timeout: 30000,
@@ -17,19 +22,22 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
-    // Desktop: every spec except the mobile Meet spec, with the same defaults as before projects were added.
-    { name: 'chromium', testIgnore: /numaa-meet-mobile\.spec\.ts/ },
-    // Mobile: only the NuMaa Meet mobile spec.
-    { name: 'iphone', testMatch: /numaa-meet-mobile\.spec\.ts/, use: { ...devices['iPhone 13'] } },     // WebKit - layout
-    { name: 'iphone-se', testMatch: /numaa-meet-mobile\.spec\.ts/, use: { ...devices['iPhone SE'] } },  // narrowest width
-    {
-      name: 'android-media', // Chromium - media / clipboard tests
-      testMatch: /numaa-meet-mobile\.spec\.ts/,
-      use: {
-        ...devices['Pixel 7'],
-        permissions: ['camera', 'microphone', 'clipboard-read', 'clipboard-write'],
-        launchOptions: { args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] },
+    // Desktop: every spec except the mobile Meet spec (and, on CI, except both Meet specs),
+    // with the same defaults as before projects were added.
+    { name: 'chromium', testIgnore: ON_CI ? MEET_SPECS : MOBILE_MEET_SPEC },
+    // Mobile: only the NuMaa Meet mobile spec. Not created on CI, so the daily run never includes them.
+    ...(ON_CI ? [] : [
+      { name: 'iphone', testMatch: MOBILE_MEET_SPEC, use: { ...devices['iPhone 13'] } },     // WebKit - layout
+      { name: 'iphone-se', testMatch: MOBILE_MEET_SPEC, use: { ...devices['iPhone SE'] } },  // narrowest width
+      {
+        name: 'android-media', // Chromium - media / clipboard tests
+        testMatch: MOBILE_MEET_SPEC,
+        use: {
+          ...devices['Pixel 7'],
+          permissions: ['camera', 'microphone', 'clipboard-read', 'clipboard-write'],
+          launchOptions: { args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'] },
+        },
       },
-    },
+    ]),
   ],
 });
