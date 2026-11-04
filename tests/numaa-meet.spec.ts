@@ -118,12 +118,12 @@ test.describe('NuMaa Meet – POSITIVE', () => {
 
   test('P2 – New Meeting defaults are pre-filled', async ({ page }) => {
     await openMeet(page);
-    // EXPECTED: title "NuMaa Teleconsultation", display name = logged-in user, passcode unchecked
+    // EXPECTED: title "NuMaa Teleconsultation", display name = logged-in user,
+    // passcode CHECKED with an 8-digit code shown (NUMAA-203 AC1: passcode is on by default)
     await expect(field(page, /meeting title/i)).toHaveValue('NuMaa Teleconsultation');
     await expect(field(page, /display name/i)).toHaveValue(USER);
-    // NOTE 2026-11-03: the site now defaults this to CHECKED. Expectation kept as "unchecked" until product
-    // confirms the new default – this assertion is expected to fail until then.
-    await expect(passcodeBox(page)).not.toBeChecked();
+    await expect(passcodeBox(page)).toBeChecked();
+    await expect(dialog(page).getByText(PASSCODE_RE)).toBeVisible();
   });
 
   test('P3 – Start Instant Meeting opens a meeting room with a code', async ({ page }) => {
