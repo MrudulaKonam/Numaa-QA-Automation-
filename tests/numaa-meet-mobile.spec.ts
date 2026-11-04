@@ -26,7 +26,7 @@
  * .env:  TEST_EMAIL=...   TEST_PASSWORD="..."   (quote if special characters)
  *
  * Selectors verified against the live site (iPhone 13 / WebKit) on 2026-11-03.
- * F04 and F08/F09 (Chromium-only, android-media) have NOT been run yet.
+ * F04, F08, F09 are Chromium-only (android-media project).
  */
 import { test, expect, Page, Locator } from '@playwright/test';
 import 'dotenv/config';
@@ -61,6 +61,12 @@ const passcodeBox = (m: Locator) => m.getByRole('checkbox', { name: /passcode/i 
 // verified: textboxes are Meeting Title (1st) then Display Name (placeholder "Your full name")
 const displayNameInput = (m: Locator) => m.getByPlaceholder('Your full name');
 const startBtn = (m: Locator) => m.getByRole('button', { name: /start instant meeting/i });
+
+/** From "Meeting Room Ready!" go to the pre-join page (/meet/<code>), where camera/mic are requested. */
+async function enterPreJoin(page: Page) {
+  await page.getByRole('button', { name: 'Enter Meeting Room Now' }).click(); // verified button name
+  await expect(page).toHaveURL(/\/meet\/numaa-[a-z0-9]{3}-[a-z0-9]{4}$/);
+}
 
 /** Elements inside root whose content overflows horizontally or that stick out of root. */
 async function findOverflow(root: Locator) {
@@ -252,9 +258,12 @@ test.describe('NuMaa Meet modal', () => {
       modal = await openMeetModal(page);
     });
 
+    // verified: Start Instant Meeting only shows "Meeting Room Ready!"; camera/mic are requested
+    // when the pre-join page (/meet/<code>) opens, after "Enter Meeting Room Now".
     test('MEET-F08 video call requests camera + mic', async ({ page }) => {
       await modal.getByRole('button', { name: /video call/i }).click();
       await startBtn(modal).click();
+      await enterPreJoin(page);
       await expect.poll(() => page.evaluate(() => (window as any).__gum.length), { timeout: 15_000 }).toBeGreaterThan(0);
       const c = await page.evaluate(() => (window as any).__gum[0]);
       expect(c.video).toBeTruthy();
@@ -264,6 +273,7 @@ test.describe('NuMaa Meet modal', () => {
     test('MEET-F09 audio-only never requests camera', async ({ page }) => {
       await modal.getByRole('button', { name: /audio/i }).click();
       await startBtn(modal).click();
+      await enterPreJoin(page);
       await expect.poll(() => page.evaluate(() => (window as any).__gum.length), { timeout: 15_000 }).toBeGreaterThan(0);
       const all = await page.evaluate(() => (window as any).__gum);
       expect(all.every((c: any) => !c.video), 'audio-only asked for video').toBe(true);
