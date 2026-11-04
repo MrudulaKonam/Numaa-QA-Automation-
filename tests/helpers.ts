@@ -55,6 +55,33 @@ function savedSession(): StorageState | undefined {
   }
 }
 
+// The access token in localStorage is a JWT that expires 10 minutes after
+// login, and the saved refreshToken goes stale once the app refreshes it. The
+// dashboard URL can't tell us whether a saved session still works, because
+// numaa.ai shows the dashboard even when logged out. So before reusing a saved
+// session, check the token: it must have at least 2 minutes left, and the
+// server must accept it on an authenticated endpoint (this also catches a
+// session ended by a login elsewhere, since one session per account is allowed).
+const MIN_TOKEN_LIFE_MS = 2 * 60 * 1000;
+
+async function sessionIsValid(page: Page, state: StorageState): Promise<boolean> {
+  const token = state.origins
+    .flatMap((o) => o.localStorage)
+    .find((item) => item.name === 'token')?.value;
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'));
+    if (typeof payload.exp !== 'number' || payload.exp * 1000 - Date.now() < MIN_TOKEN_LIFE_MS) return false;
+  } catch {
+    return false;
+  }
+  const res = await page.request.get('/chat/notifications', {
+    headers: { Authorization: `Bearer ${token}` },
+    failOnStatusCode: false,
+  });
+  return res.ok();
+}
+
 async function restoreSession(page: Page, state: StorageState): Promise<boolean> {
   await page.context().addCookies(state.cookies);
   // localStorage can only be written from a page on the same origin
@@ -71,7 +98,7 @@ export async function login(page: Page): Promise<boolean> {
   requireCredentials();
 
   const saved = savedSession();
-  if (saved && await restoreSession(page, saved)) {
+  if (saved && await sessionIsValid(page, saved) && await restoreSession(page, saved)) {
     await dismissCookieBanner(page);
     return true;
   }

@@ -18,6 +18,9 @@ import { login } from './helpers';
 // AI-graded review, not a Playwright assertion.
 
 test.describe("ASKQ - ask-numaa-100-questions", () => {
+  // Each test may wait up to 5 s for the input to clear, 45 s for the answer and
+  // 30 s for the Safety Alert, plus link checks — more than the global 30 s limit.
+  test.describe.configure({ timeout: 120_000 });
 
       test.beforeEach(async ({ page }) => {
     await login(page);
