@@ -76,7 +76,12 @@ test.describe("MTM - mom-to-mom", () => {
   test("MTM2-10: Composer supporting controls render", async ({ page }) => {
     await login(page);
     await page.goto('/mom-to-mom');
-    for (const label of ['Photo', 'Voice', 'Explore Health Topics', 'Share']) await expect(page.getByRole('button', { name: new RegExp(label, 'i') })).toBeVisible();
+    for (const label of ['Photo', 'Voice', 'Explore Health Topics']) await expect(page.getByRole('button', { name: label, exact: true })).toBeVisible();
+    // "Share" matched 4 buttons (strict-mode error): the composer's Share button plus a
+    // Share button on every feed post. Target the first Share button after the composer box
+    // (it stays disabled until something is typed, so only check it's visible).
+    const composer = page.getByPlaceholder('Share your thought, mama… (use @ to mention)');
+    await expect(composer.locator('xpath=following::button[normalize-space()="Share"][1]')).toBeVisible();
   });
 
   // ID: MTM2-11 | Type: Negative | Severity: n/a | Last status: PASS
