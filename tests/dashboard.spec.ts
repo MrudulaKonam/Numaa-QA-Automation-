@@ -12,10 +12,11 @@ test.describe("DASH - dashboard", () => {
   });
 
   test('DASH-01: Page loads with personalized welcome heading', async ({ page }) => {
-    // The welcome uses the logged-in account's username, so don't hard-code one
-    // person's name (it said "Mrudula" for a different account than .env's).
-    const name = process.env.NUMAA_USER_NAME;
-    await expect(page.getByText(name ? new RegExp(`Welcome ${name}`, 'i') : /Welcome \S+/i)).toBeVisible();
+    // The greeting shows either the first name ("Mrudula") or the username
+    // ("madhunewmom") for the same account, depending on which profile field has
+    // loaded, so don't pin one name. "Welcome User" is the fallback shown when the
+    // profile didn't load (e.g. the session dropped), so that must still fail.
+    await expect(page.getByRole('heading', { level: 1, name: /Welcome (?!User\b)\S+/i })).toBeVisible();
     await expect(page.getByText(/Let's continue your journey/i)).toBeVisible();
   });
 
