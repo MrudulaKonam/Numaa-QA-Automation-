@@ -9,6 +9,8 @@ test.describe("DASH - dashboard", () => {
   test.beforeEach(async ({ page }) => {
     await login(page);
     await page.goto('/dashboard');
+    // Wait for the dashboard data to finish loading before any checks
+    await expect(page.getByRole('heading', { level: 1, name: /Welcome /i })).toBeVisible({ timeout: 30000 });
   });
 
   test('DASH-01: Page loads with personalized welcome heading', async ({ page }) => {
