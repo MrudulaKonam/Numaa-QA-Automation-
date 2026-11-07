@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 // Module: HERO  |  1 test case(s)
 // Source: Numaa_Consolidated_Regression_Suite_REVIEWED.xlsx

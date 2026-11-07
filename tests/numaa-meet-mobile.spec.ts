@@ -28,7 +28,7 @@
  * Selectors verified against the live site (iPhone 13 / WebKit) on 2026-11-03.
  * F04, F08, F09 are Chromium-only (android-media project).
  */
-import { test, expect, Page, Locator } from '@playwright/test';
+import { test, expect, Page, Locator } from './fixtures';
 import 'dotenv/config';
 
 const BASE = process.env.NUMAA_URL ?? 'https://numaa.ai';

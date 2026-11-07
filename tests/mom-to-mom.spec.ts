@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { login, requireCredentials, requireLiveFeature } from './helpers';
 
 // Module: MTM  |  25 test case(s)

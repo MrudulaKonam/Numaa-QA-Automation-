@@ -9,7 +9,7 @@
  *        TEST_EMAIL_2, TEST_PASSWORD_2   (OPTIONAL second account – P5, P6, N10 are
  *        skipped until these are added)
  */
-import { test, expect, Page, Browser } from '@playwright/test';
+import { test, expect, Page, Browser, autoAcceptCookies } from './fixtures';
 import 'dotenv/config';
 
 const BASE = process.env.NUMAA_BASE_URL ?? 'https://numaa.ai';
@@ -98,6 +98,7 @@ async function startInstant(page: Page, passcode = false): Promise<{ code: strin
 async function secondUser(browser: Browser) {
   const ctx = await browser.newContext();
   const p = await ctx.newPage();
+  await autoAcceptCookies(p); // not created by the page fixture
   await login(p, EMAIL_2, PASS_2!);
   return { ctx, p };
 }

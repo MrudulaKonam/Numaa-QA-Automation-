@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { gotoPublic, requireLiveFeature } from './helpers';
 
 // Module: BABY  |  2 test case(s)

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { login } from './helpers';
 
 // Module: CNT - content (Your Content Sanctuary)

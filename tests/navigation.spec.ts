@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { gotoPublic, requireCredentials, requireLiveFeature } from './helpers';
 
 // Module: NAV  |  6 test case(s)
