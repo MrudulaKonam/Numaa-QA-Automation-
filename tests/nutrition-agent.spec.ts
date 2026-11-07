@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { login, requireCredentials, requireLiveFeature } from './helpers';
 
 // Module: NUT  |  27 test case(s)

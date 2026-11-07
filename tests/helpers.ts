@@ -1,6 +1,7 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
+import { acceptCookiesButton } from './fixtures';
 
 export function hasCredentials(): boolean {
   return Boolean(process.env.TEST_EMAIL && process.env.TEST_PASSWORD);
@@ -18,10 +19,18 @@ export function requireLiveFeature(feature: string, reason?: string): void {
   test.skip(true, reason ?? `Requires the live ${feature} feature in the current environment`);
 }
 
+// Accepts the cookie banner if consent isn't stored yet. The fixture's locator
+// handler (tests/fixtures.ts) also clicks it at any step; this explicit version
+// makes sure localStorage.cookieConsent is set before login() saves storageState,
+// so restored sessions never see the banner again.
 export async function dismissCookieBanner(page: Page) {
-  const acceptCookies = page.getByRole('button', { name: 'Accept All', exact: true });
-  if (await acceptCookies.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await acceptCookies.click();
+  const consent = await page.evaluate(() => localStorage.getItem('cookieConsent')).catch(() => null);
+  if (consent) return;
+  const acceptCookies = acceptCookiesButton(page);
+  if (await acceptCookies.waitFor({ state: 'visible', timeout: 3000 }).then(() => true, () => false)) {
+    // the locator handler may already have clicked it
+    await acceptCookies.click({ timeout: 2000 }).catch(() => {});
+    await acceptCookies.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
   }
 }
 
@@ -84,6 +93,7 @@ export async function login(page: Page): Promise<boolean> {
   await page.locator('input[type="password"]').fill(password!);
   await page.getByRole('button', { name: /continue/i }).click();
   await expect(page).toHaveURL(/dashboard/, { timeout: 20000 });
+  // accept before saving, so the consent (localStorage.cookieConsent) is in the saved state
   await dismissCookieBanner(page);
   fs.mkdirSync(path.dirname(sessionFile()), { recursive: true });
   await page.context().storageState({ path: sessionFile() });

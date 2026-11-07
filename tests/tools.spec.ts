@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { gotoPublic } from './helpers';
 
 // Module: TLS  |  2 test case(s)

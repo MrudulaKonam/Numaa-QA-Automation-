@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { gotoPublic, requireLiveFeature } from './helpers';
 
 // Module: RES  |  8 test case(s)

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { gotoPublic, login } from './helpers';
 
 // Module: ASK  |  19 test case(s)
