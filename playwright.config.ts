@@ -13,11 +13,12 @@ export default defineConfig({
   // numaa.ai allows one active session per account and every test shares one
   // account, so parallel workers log each other out. Run serially on CI.
   workers: process.env.CI ? 1 : undefined,
-  reporter: [['html', { open: 'never' }]],
+  // json feeds the CI job summary and failure issue (scripts/ci-summary.mjs)
+  reporter: [['html', { open: 'never' }], ['json', { outputFile: 'reports/results.json' }]],
   use: {
     baseURL: 'https://numaa.ai',
     permissions: ['camera', 'microphone'],
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },

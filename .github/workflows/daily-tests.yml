@@ -6,6 +6,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write # create/update/close the "Daily run failures" issue
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -13,11 +16,60 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npx playwright install --with-deps
-      - run: npx playwright test
+      - name: Run Playwright tests
+        id: tests
+        run: npx playwright test
         env:
           TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
           NUMAA_USER_NAME: ${{ secrets.NUMAA_USER_NAME }}
+      - name: Write job summary
+        id: summary
+        if: always()
+        run: node scripts/ci-summary.mjs reports/results.json
+      - name: Open, update or close the failure issue
+        if: always() && steps.summary.outputs.has_results == 'true'
+        uses: actions/github-script@v7
+        env:
+          FAILED: ${{ steps.summary.outputs.failed }}
+          RUN_DATE: ${{ steps.summary.outputs.date }}
+        with:
+          script: |
+            const fs = require('fs');
+            const { owner, repo } = context.repo;
+            const label = 'ci-failure';
+            const failed = Number(process.env.FAILED);
+            const title = `Daily run failures – latest: ${process.env.RUN_DATE}`;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            // Pull requests also count as issues in this API; keep real issues only
+            const open = (await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', labels: label }))
+              .filter((i) => !i.pull_request);
+
+            if (failed > 0) {
+              try {
+                await github.rest.issues.createLabel({ owner, repo, name: label, color: 'd73a4a', description: 'Daily Playwright run failures' });
+              } catch (e) {
+                if (e.status !== 422) throw e; // 422 = label already exists
+              }
+              // The summary already starts with "## Daily NuMaa test run – <date>"
+              const body = fs.readFileSync('reports/issue-body.md', 'utf8') + `\nRun: ${runUrl}\n`;
+              // One open ci-failure issue: add each failing run as a comment
+              const existing = open.sort((a, b) => a.number - b.number)[0];
+              if (existing) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+                await github.rest.issues.update({ owner, repo, issue_number: existing.number, title });
+                core.info(`Commented on #${existing.number}`);
+              } else {
+                const { data } = await github.rest.issues.create({ owner, repo, title, body, labels: [label] });
+                core.info(`Created #${data.number}`);
+              }
+            } else {
+              for (const issue of open) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: issue.number, body: `All passing – ${runUrl}` });
+                await github.rest.issues.update({ owner, repo, issue_number: issue.number, state: 'closed' });
+                core.info(`Closed #${issue.number}`);
+              }
+            }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
