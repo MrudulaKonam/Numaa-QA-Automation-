@@ -14,7 +14,7 @@ test.describe("MH - mental-health", () => {
   });
 
   test('MH-01: Page loads with heading and description', async ({ page }) => {
-    await expect(page.getByText(/wellness/i).first()).toBeVisible();
+    await expect(page.getByText('Wellness', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Emotional Support Guide', exact: true })).toBeVisible();
     await expect(page.getByText(/Helping you manage stress, mood, and mental wellness/i)).toBeVisible();
   });
@@ -79,7 +79,7 @@ test.describe("MH - mental-health", () => {
     await expect(page.getByText(/emergency services/i)).toBeVisible();
   });
   test('MH-10: Page <title> is unique to Mental Health', async ({ page }) => {
-    await expect(page).toHaveTitle(/Mental Health|Wellness/i);
+    await expect(page).toHaveTitle(/Wellness/i);
   });
 
 });
