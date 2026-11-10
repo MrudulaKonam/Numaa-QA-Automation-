@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers';
+import { askNumaaThread, expectRealReply, popupThread, snapshotChat } from './chat-helpers';
 
 // Module: BLANK - blank-page-after-chat
 //
@@ -67,6 +68,8 @@ test.describe("BLANK - blank-page-after-chat", () => {
     const input = page.getByPlaceholder('Ask anything...');
     await input.fill(questionText);
 
+    const thread = askNumaaThread(page);
+    const beforeText = await snapshotChat(thread);
     const beforeLen = await visibleTextLength(page);
     await page.getByRole('button', { name: 'Send message', exact: true }).click();
 
@@ -81,6 +84,7 @@ test.describe("BLANK - blank-page-after-chat", () => {
     // Also confirm a real response eventually rendered (not just "didn't
     // go blank" — the input should clear and new content should appear).
     await expect(input).toHaveValue('', { timeout: 5000 });
+    await expectRealReply(page, thread, beforeText, questionText);
   }
 
   // --- Pattern B: popup chat (e.g. Mom to Mom) ---
@@ -95,6 +99,8 @@ test.describe("BLANK - blank-page-after-chat", () => {
     const input = page.getByPlaceholder(placeholder, { exact: true });
     await input.fill(questionText);
 
+    const thread = popupThread(page, input);
+    const beforeText = await snapshotChat(thread);
     const beforeLen = await visibleTextLength(page);
     await input.press('Enter');
 
@@ -105,6 +111,8 @@ test.describe("BLANK - blank-page-after-chat", () => {
     ).toBe(false);
 
     await expect(input).toHaveValue('', { timeout: 5000 });
+    // A real AI reply rendered (not an error message)
+    await expectRealReply(page, thread, beforeText, questionText);
   }
 
   // ───────────────────────────────────────────────────────────

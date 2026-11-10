@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers';
+import { askNumaaThread, expectRealReply, snapshotChat } from './chat-helpers';
 
 // Module: ASKQ - ask-numaa-100-questions
 // 100 realistic pregnancy-related questions covering NuMaa's real topic areas:
@@ -32,15 +33,14 @@ test.describe("ASKQ - ask-numaa-100-questions", () => {
 
    async function askAndVerifyResponse(page, questionText) {
     const input = page.getByPlaceholder('Ask anything...');
-    const messagesBefore = await page.locator('main p').count();
+    // Conversation pane only; the history sidebar also gains a <p> per question
+    const thread = askNumaaThread(page);
+    const before = await snapshotChat(thread);
     await input.fill(questionText);
     await page.getByRole('button', { name: 'Send message', exact: true }).click();
     await expect(input).toHaveValue('', { timeout: 5000 });
-    // Wait for new response content to actually appear in the chat thread.
-    await expect(async () => {
-      const messagesAfter = await page.locator('main p').count();
-      expect(messagesAfter).toBeGreaterThan(messagesBefore);
-    }).toPass({ timeout: 45000 });
+    // Wait for a real AI reply; fails on "temporarily busy" and other error replies.
+    await expectRealReply(page, thread, before, questionText);
   }
 
      async function verifyLinksResolve(page, request) {
