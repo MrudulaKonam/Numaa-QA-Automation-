@@ -1,7 +1,7 @@
-// Builds the daily-run summary from the Playwright JSON report (reports/results.json).
+// Builds the weekly-run summary from the Playwright JSON report (reports/results.json).
 // Writes:
 //   - the job summary to $GITHUB_STEP_SUMMARY
-//   - reports/issue-body.md (used for the "Daily run failures" issue)
+//   - reports/issue-body.md (used for the "Weekly run failures" issue)
 //   - outputs to $GITHUB_OUTPUT: has_results, failed, date
 // Usage: node scripts/ci-summary.mjs [path/to/results.json]
 import fs from 'node:fs';
@@ -23,7 +23,7 @@ function writeSummary(md) {
 }
 
 if (!fs.existsSync(resultsPath)) {
-  writeSummary(`## Daily NuMaa test run\n\nNo test results found (${resultsPath}). The test step did not finish; check the job log.\n`);
+  writeSummary(`## Weekly NuMaa test run\n\nNo test results found (${resultsPath}). The test step did not finish; check the job log.\n`);
   setOutput('has_results', 'false');
   process.exit(0);
 }
@@ -85,7 +85,7 @@ const counts = [
   `| ${stats.expected ?? 0} | ${stats.unexpected ?? 0} | ${stats.flaky ?? 0} | ${stats.skipped ?? 0} |`,
 ].join('\n');
 
-let md = `## Daily NuMaa test run – ${date}\n\n${counts}\n\n`;
+let md = `## Weekly NuMaa test run – ${date}\n\n${counts}\n\n`;
 md += failed.length ? `### Failed tests (${failed.length})\n\n${table(failed)}\n\n` : 'No failed tests.\n\n';
 if (flaky.length) md += `### Flaky tests (${flaky.length}, failed then passed on retry)\n\n${table(flaky)}\n\n`;
 if (runUrl) md += `[Run log and playwright-report artifact](${runUrl})\n`;
