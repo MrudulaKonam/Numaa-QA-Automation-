@@ -1,14 +1,15 @@
-name: Daily NuMaa Test Suite
+name: Weekly NuMaa Test Suite
 on:
   schedule:
-    - cron: '0 4 * * *'
+    - cron: '0 14 * * 1' # every Monday 6 AM Pacific (PST; 7 AM during PDT)
   workflow_dispatch: {}
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     permissions:
       contents: read
-      issues: write # create/update/close the "Daily run failures" issue
+      issues: write # create/update/close the "Weekly run failures" issue
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -39,7 +40,7 @@ jobs:
             const { owner, repo } = context.repo;
             const label = 'ci-failure';
             const failed = Number(process.env.FAILED);
-            const title = `Daily run failures – latest: ${process.env.RUN_DATE}`;
+            const title = `Weekly run failures – latest: ${process.env.RUN_DATE}`;
             const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
             // Pull requests also count as issues in this API; keep real issues only
             const open = (await github.paginate(github.rest.issues.listForRepo, { owner, repo, state: 'open', labels: label }))
@@ -47,11 +48,11 @@ jobs:
 
             if (failed > 0) {
               try {
-                await github.rest.issues.createLabel({ owner, repo, name: label, color: 'd73a4a', description: 'Daily Playwright run failures' });
+                await github.rest.issues.createLabel({ owner, repo, name: label, color: 'd73a4a', description: 'Weekly Playwright run failures' });
               } catch (e) {
                 if (e.status !== 422) throw e; // 422 = label already exists
               }
-              // The summary already starts with "## Daily NuMaa test run – <date>"
+              // The summary already starts with "## Weekly NuMaa test run – <date>"
               const body = fs.readFileSync('reports/issue-body.md', 'utf8') + `\nRun: ${runUrl}\n`;
               // One open ci-failure issue: add each failing run as a comment
               const existing = open.sort((a, b) => a.number - b.number)[0];
@@ -84,8 +85,8 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: NuMaa Daily Test Suite Report - ${{ github.run_id }}
+          subject: NuMaa Weekly Test Suite Report - ${{ github.run_id }}
           to: mrudula.konam@gmail.com
           from: NuMaa Test Automation <${{ secrets.MAIL_USERNAME }}> # v12+ requires an email address in from
-          body: Daily Playwright test run completed. Full HTML report attached and also available in the GitHub Actions run artifacts.
+          body: Weekly Playwright test run completed. Full HTML report attached and also available in the GitHub Actions run artifacts.
           attachments: playwright-report/index.html
