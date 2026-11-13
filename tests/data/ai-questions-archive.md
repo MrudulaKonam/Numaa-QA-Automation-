@@ -169,3 +169,19 @@ and that its links resolve; MTM-H01/H09 required 988/911/crisis/professional in 
 | MTM-L08 | LOW – platform / UI | How do I edit or delete a post I made? | removed |
 | MTM-L09 | LOW – platform / UI | How do I share a photo in my post? | removed |
 | MTM-L10 | LOW – platform / UI | How do I use the voice feature to post? | removed |
+
+## Blank page after chat (was `blank-page-after-chat.spec.ts`) — 8 questions, removed 2026-11-13
+
+Each test sent the question and failed if the page went blank (under 40 visible characters) during the first 20 s, then required a real reply.
+The regular tests in `tests/ai-agent-chats.spec.ts` still check for a real reply, but not for a blank page.
+
+| ID | Agent | Path | Question | Status |
+|---|---|---|---|---|
+| BLANK-01 | Ask NuMaa | /asknumaa | What foods are rich in iron? | removed 2026-11-13 |
+| BLANK-02 | Mom to Mom | /mom-to-mom | What are good rich foods that give calcium? | removed 2026-11-13 |
+| BLANK-03 | Kick Count Chat | /baby-kick-tracker | How many kicks should I feel today? | removed 2026-11-13 |
+| BLANK-04 | Baby Checklist | /baby-checklist | What should be on my hospital bag checklist? | removed 2026-11-13 |
+| BLANK-05 | NuMaa Fitness | /physical-agent | What exercises are safe in the third trimester? | removed 2026-11-13 |
+| BLANK-06 | Content | /content-agent | Show me videos about labor and delivery. | removed 2026-11-13 |
+| BLANK-07 | Journal Companion | /journal-agent | Help me write a journal entry about today. | removed 2026-11-13 |
+| BLANK-08 | Shopping Assistant | /shopping-agent | What baby gear do I actually need? | removed 2026-11-13 |
