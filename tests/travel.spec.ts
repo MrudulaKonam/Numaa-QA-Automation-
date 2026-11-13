@@ -1,5 +1,6 @@
 import { test, expect } from './fixtures';
 import { login } from './helpers';
+import { expectRealReply, snapshotChat } from './chat-helpers';
 
 // Module: TRV - travel (Aria - Pregnancy Travel Advisor)
 // Rebuilt from live numaa.ai/travel-agent content on 2026-09-20
@@ -59,8 +60,13 @@ test.describe("TRV - travel", () => {
   test('TRV-09: Clicking a suggested question sends it as a chat message', async ({ page }) => {
     // The input stays disabled/empty because clicking a suggestion sends it
     // directly as a message rather than populating the input box for editing.
-    await page.getByRole('button', { name: 'Can I fly at 28 weeks?', exact: true }).click();
-    await expect(page.getByText('Can I fly at 28 weeks?', { exact: true }).last()).toBeVisible();
+    const question = 'Can I fly at 28 weeks?';
+    const thread = page.locator('main');
+    const before = await snapshotChat(thread);
+    await page.getByRole('button', { name: question, exact: true }).click();
+    await expect(page.getByText(question, { exact: true }).last()).toBeVisible();
+    // Aria answers with a real reply, not an error message
+    await expectRealReply(page, thread, before, question);
   });
 
   test('TRV-10: General-guidance disclaimer renders', async ({ page }) => {
